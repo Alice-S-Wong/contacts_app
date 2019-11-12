@@ -1,6 +1,8 @@
 {
   first_name: @contacts.first_name,
   last_name: @contacts.last_name,
+  full_name: @contacts.full_name,
   email: @contacts.email,
-  phone_number: @contacts.phone_number
+  phone_number: @contacts.phone_japanese_prefix,
+  updated_at: @contacts.friendly_updated_at
 }
