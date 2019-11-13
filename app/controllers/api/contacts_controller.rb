@@ -11,13 +11,16 @@ class Api::ContactsController < ApplicationController
   end
 
   def create
+    coordinates = Geocoder.coordinates(params[:address])
     @contact = Contact.new(
       first_name: params[:first_name],
       middle_name: params[:middle_name],
       last_name: params[:last_name],
       email: params[:email],
       phone_number: params[:phone_number],
-      bio: params[:bio]
+      bio: params[:bio],
+      latitude: coordinates[0],
+      longitude: coordinates[1]
       )
     @contact.save
     render 'show.json.jb'
@@ -34,7 +37,7 @@ class Api::ContactsController < ApplicationController
     @contact.save
     render 'show.json.jb'  
   end
-
+  
   def destroy
     @contact = Contact.find_by(id: params[:id])
     @contact.destroy
