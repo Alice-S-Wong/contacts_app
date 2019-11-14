@@ -12,18 +12,32 @@ class Api::ContactsController < ApplicationController
 
   def create
     coordinates = Geocoder.coordinates(params[:address])
-    @contact = Contact.new(
-      first_name: params[:first_name],
-      middle_name: params[:middle_name],
-      last_name: params[:last_name],
-      email: params[:email],
-      phone_number: params[:phone_number],
-      bio: params[:bio],
-      latitude: coordinates[0],
-      longitude: coordinates[1]
-      )
-    @contact.save
-    render 'show.json.jb'
+    if coordinates
+      @contact = Contact.new(
+        first_name: params[:first_name],
+        middle_name: params[:middle_name],
+        last_name: params[:last_name],
+        email: params[:email],
+        phone_number: params[:phone_number],
+        bio: params[:bio],
+        latitude: coordinates[0],
+        longitude: coordinates[1]
+        )
+    else
+      @contact = Contact.new(
+        first_name: params[:first_name],
+        middle_name: params[:middle_name],
+        last_name: params[:last_name],
+        email: params[:email],
+        phone_number: params[:phone_number],
+        bio: params[:bio],
+        )
+    end
+    if @contact.save
+      render 'show.json.jb'
+    else  
+      render json: {errors: @contact.errors.full_messages}, status: :unprocessable_entity
+    end
   end
 
   def update
@@ -39,8 +53,12 @@ class Api::ContactsController < ApplicationController
       @contact.latitude = coordinates[0] || @contact.latitude
       @contact.longitude = coordinates[1] || @contact.longitude
     end
-    @contact.save
-    render 'show.json.jb'  
+    if @contact.save
+      render 'show.json.jb' 
+    else
+      render json: {errors: @contact.errors.full_messages}, status: :unprocessable_entity
+    end
+ 
   end
   
   def destroy
