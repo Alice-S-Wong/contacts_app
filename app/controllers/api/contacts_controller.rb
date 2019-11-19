@@ -1,7 +1,10 @@
 class Api::ContactsController < ApplicationController
 
   def index
-    @contacts = Contact.all
+    p "*" * 50
+    p current_user
+    p "*" * 50
+    @contacts = Contact.where(user_id: current_user.id)
     render 'index.json.jb'
   end
 
@@ -11,33 +14,44 @@ class Api::ContactsController < ApplicationController
   end
 
   def create
-    coordinates = Geocoder.coordinates(params[:address])
-    if coordinates
-      @contact = Contact.new(
-        first_name: params[:first_name],
-        middle_name: params[:middle_name],
-        last_name: params[:last_name],
-        email: params[:email],
-        phone_number: params[:phone_number],
-        bio: params[:bio],
-        latitude: coordinates[0],
-        longitude: coordinates[1]
-        )
-    else
-      @contact = Contact.new(
-        first_name: params[:first_name],
-        middle_name: params[:middle_name],
-        last_name: params[:last_name],
-        email: params[:email],
-        phone_number: params[:phone_number],
-        bio: params[:bio],
-        )
-    end
-    if @contact.save
-      render 'show.json.jb'
-    else  
-      render json: {errors: @contact.errors.full_messages}, status: :unprocessable_entity
-    end
+    # coordinates = Geocoder.coordinates(params[:address])
+    # if coordinates
+    #   @contact = Contact.new(
+    #     first_name: params[:first_name],
+    #     middle_name: params[:middle_name],
+    #     last_name: params[:last_name],
+    #     email: params[:email],
+    #     phone_number: params[:phone_number],
+    #     bio: params[:bio],
+    #     latitude: coordinates[0],
+    #     longitude: coordinates[1]
+    #     )
+    # else
+    #   @contact = Contact.new(
+    #     first_name: params[:first_name],
+    #     middle_name: params[:middle_name],
+    #     last_name: params[:last_name],
+    #     email: params[:email],
+    #     phone_number: params[:phone_number],
+    #     bio: params[:bio],
+    #     )
+    # end
+    @contact = Contact.new(
+      first_name: params[:first_name],
+      middle_name: params[:middle_name],
+      last_name: params[:last_name],
+      email: params[:email],
+      phone_number: params[:phone_number],
+      bio: params[:bio],
+      user_id: current_user.id
+      )
+    # if @contact.save
+    #   render 'show.json.jb'
+    # else  
+    #   render json: {errors: @contact.errors.full_messages}, status: :unprocessable_entity
+    # end
+    @contact.save
+    render 'show.json.jb'
   end
 
   def update
