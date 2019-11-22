@@ -1,10 +1,11 @@
 class Api::ContactsController < ApplicationController
 
   def index
-    p "*" * 50
-    p current_user
-    p "*" * 50
-    @contacts = Contact.where(user_id: current_user.id)
+    if current_user
+      @contacts = Contact.where(user_id: current_user.id)
+    else
+      @contacts = Contact.all
+    end
     render 'index.json.jb'
   end
 
