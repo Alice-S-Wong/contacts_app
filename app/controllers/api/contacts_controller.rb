@@ -1,9 +1,7 @@
 class Api::ContactsController < ApplicationController
 
   def index
-    group = Group.find_by(name: params[:group])
-    @contacts = group.contacts
-    @contacts = @contacts.where(user_id: current_user.id)
+    @contacts = Contact.all
     render 'index.json.jb'
   end
 
@@ -54,7 +52,7 @@ class Api::ContactsController < ApplicationController
   end
 
   def update
-    coordinates = Geocoder.coordinates(params[:address])
+    # coordinates = Geocoder.coordinates(params[:address])
     @contact = Contact.find_by(id: params[:id])
     @contact.first_name = params[:first_name] || @contact.first_name
     @contact.middle_name = params[:middle_name] || @contact.middle_name
@@ -62,10 +60,10 @@ class Api::ContactsController < ApplicationController
     @contact.email = params[:email] || @contact.email
     @contact.phone_number = params[:phone_number] || @contact.phone_number
     @contact.bio = params[:bio] || @contact.bio
-    if coordinates 
-      @contact.latitude = coordinates[0] || @contact.latitude
-      @contact.longitude = coordinates[1] || @contact.longitude
-    end
+    # if coordinates 
+    #   @contact.latitude = coordinates[0] || @contact.latitude
+    #   @contact.longitude = coordinates[1] || @contact.longitude
+    # end
     if @contact.save
       render 'show.json.jb' 
     else
